@@ -1,0 +1,80 @@
+html{
+    font-size: 175%;
+    font-weight: 300;
+    line-height: 1.3;
+}
+body{
+    align-items: center;
+    background-color: #8576FF;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+}
+.container{
+    max-width: 20em;
+}
+.calculadora{
+    border-radius: 12px;
+    box-shadow: 0 0 40px 0px rgba(0, 0, 0, 0.15);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2em;
+    max-width: 15em;
+    overflow: hidden;
+}
+.display{
+    background-color:#86469C;
+    color: #FFCDEA;
+    font-size: 1.7142857114em;
+    padding: 0.5em 0.75em;
+    text-align: right;
+}
+.teclas{
+    background-color: #86469C;
+    display: grid;
+    grid-gap: 1px;
+    grid-template-columns: repeat(4,1fr);
+    
+}
+.teclas > *{
+    background-color:#BC7FCD;
+    color:#f4f4f4;
+    border: none;
+    border-radius: 10px;
+    padding: 0.5em 1.25em;
+    position: relative;
+    text-align: center;
+    margin-bottom: 6px;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+.teclas > *:active::before,
+.teclas > .is-depressed::before{
+    background-color: #BC7FCD;
+    bottom: 0;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0,0.5) inset;
+    content: "";
+    left: 0;
+    opacity: 0.3;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+.key--operator-subtract{
+    grid-column: -2;
+    grid-row: 2 / span 1;
+}
+.key--operator-multiply{
+    grid-column: -2;
+    grid-row: 3 / span 1;
+}
+.key--operator-divide{
+    grid-column: -2;
+    grid-row: 4 / span 1;
+}
+.key--equal{
+    background-image: linear-gradient(to bottom,#FFCDEA,#FB9AD1);
+    grid-column: -2;
+    grid-row: 5 / span 1;
+}
