@@ -3,37 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <script type="text/javascript" src="Calculadora.js"></script>
     <title>Calculadora</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="text/html" src="Calculadora.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="calculadora">
-            <div class="display">0</div>
-            <div class="teclas">
-                <button data-action="clear">AC</button>
-                <button data-action="porcent">%</button>
-                <button data-action="negative/positive">±</button>
-                <button class="key--operator-add" data-action="add">+</button>
-                <button class="key--operator-subtract" data-action="subtract">-</button>
-                <button class="key--operator-multiply" data-action="multiply">&times;</button>
-                <button class="key--operator-divide" data-action="divide">÷</button>
-                <button>7</button>
-                <button>8</button>
-                <button>9</button>
-                <button>4</button>
-                <button>5</button>
-                <button>6</button>
-                <button>1</button>
-                <button>2</button>
-                <button>3</button>
-                <button>0</button>
-                <button data-action="decimal">.</button>
-                <button data-action="parentheses">( )</button>
-                <button class="key--equal" data-action="calculate">=</button>
+    <div class="calculadora">
+        <div class="display">
+            <div class="buttons">
+                <button class="bg-lilas">C</button>
+                <button class="bg-lilas">±</button>
+                <button class="bg-lilas">%</button>
+                <button class="bg-roxo">÷</button>
+
+                <button class="bg-rosa">7</button>
+                <button class="bg-rosa">8</button>
+                <button class="bg-rosa">9</button>
+                <button class="bg-roxo">X</button>
+
+                <button class="bg-rosa">4</button>
+                <button class="bg-rosa">5</button>
+                <button class="bg-rosa">6</button>
+                <button class="bg-roxo">-</button>
+
+                <button class="bg-rosa">1</button>
+                <button class="bg-rosa">2</button>
+                <button class="bg-rosa">3</button>
+                <button class="bg-roxo">+</button>
+
+                <button class="bg-rosa button-zero">0</button>
+                <button class="bg-rosa">,</button>
+                <button class="bg-roxo">=</button>
+                
             </div>
         </div>
     </div>
+    
 </body>
 </html>

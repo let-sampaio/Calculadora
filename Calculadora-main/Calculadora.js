@@ -1,149 +1,104 @@
-const calculadora = document.querySelector('.calculadora')
-const teclas = calculadora.querySelector('.teclas')
+const display = document.querySelector(".display");
+const buttons = document.querySelectorAll(".buttons button");
 
-teclas.addEventListener('click', e =>{
-    if(e.target.matches('button')){
+let currentNumber = "";
+let firstOperand = null;
+let operator = null;
+let restart = false;
 
-        Array.from(Key.parentNode.children)
-        .forEach(k =>  k.classList.remove('is-depressed'))
+function updateResult (originClear = false){
+    XPathResult.innerText = originClear ? 0 : currentNumber.replace(".",",");
+} 
 
-        calculadora.dataset.previouskeyType = 'operator'
-
-    }
-})
-
-const tecla = e.target
-const action = tecla.dataset.action
-
-
-if (!action){
-    calculadora.dataset.previouskeyType = 'number'
+function addDigit(digit){
+    if(digit === "," && (currentNumber.includes(",") || !currentNumber))
+    return;
+}
+if(restart){
+    currentNumber = digit;
+    restart = false;
+}else{
+    currentNumber += digit;
 }
 
-if(
-    action === 'add' || 
-    action === 'subtract' ||
-    action === 'multiply' ||
-    action === 'divide' 
-){
-    const firstValue = calculadora.dataset.firstValue
-    const operator = calculadora.dataset.operator
-    const secondValue = displayedNum
+updateResult();
 
-    if(firstValue &&
-        operator &&
-        previouskeyType !== 'operator')
-        {
-        const calcValue= calculadora(firstValue,operator,secondValue)
-        display.textContent = calcValue
-        Calculadora.dataset.firstValue = calcValue
+function setOperator (newOperator){
+    if(currentNumber){
+        calculate();
+
+        firstOperand = parseFloat(currentNumber.replace(",","."));
+        currentNumber = "";
+    }
+    operator = newOperator; 
+}
+
+
+function calculate(){
+    if(operator === null || firstOperand === null) return;
+    let secondOperand = parseFloat(currentNumber.replace(",","."));
+    let resultValue;
+
+    switch (operator){
+        case "+":
+            resultValue = firstOperand + secondOperand;
+            break;
+        case "-":
+            resultValue = firstOperand + secondOperand;
+            break
+        case "x":
+            resultValue = firstOperand * secondOperand;
+            break;
+        case "÷":
+            resultValue = firstOperand / secondOperand;
+            break;
+        default:
+            return;                
+    }
+    if(resultValue.toString().split(".")[1]?.length > 5){
+        currentNumber = parseFloat(resultValue.toFixed(5).toString());
     }else{
-        calculadora.dataset.firstValue = displayedNum
+        currentNumber=resultValue.toString();
     }
-
-    Key.classList.add('is-depressed')
-    calculadora.dataset.firstValue = displayedNum
-    calculadora.dataset.operator = action
+    operator = null;
+    firstOperand = null;
+    percentageValue = null;
+    updateResult();
 }
-
-if(action === 'decimal'){
-    if(!displayedNum.includes('.')){
-        display.textContent = displayedNum + '.'
-     }else if (previouskeyType === 'operator'){
-        display.textContent = '0'
-     }
-    
-    calculadora.dataset.previouskeyType = 'decimal'
+function clearCalculator(){
+    currentNumber = "";
+    firstOperand = null;
+    operator = null;
+    updateResult(true);
 }
-if(action !== 'clear'){
-    const clearButton = calculadora.querySelector('[data-action=clear]')
-    clearButton.textContent = 'CE'
-}
-if(action === 'clear'){
-    if(Key.textContent){
-
+function setPercentage(){
+    let result = parseFloat(currentNumber) / 100;
+    if(["*","-"].includes(operator)){
+        result = result * (firstOperand || 1);
     }
-    display.textContent = 0
-    MediaKeyMessageEvent.textContent = 'AC'
-    calculadora.dataset.previouskeyType = 'clear'
+    if(result.toString(),split(".")[1]?.length > 5){
+        result = result.toFixed(5).toString();
+    }
+    currentNumber = result.toString();
+    updateResult();
 }
-if(action === 'calculate'){
-    const firstValue = calculadora.dataset.firstValue
-    const operator = calculadora.dataset.operator
-    const secondValue = displayedNum
 
-    if(firstValue){
-        if(previouskeyType === 'calculate'){
-            firstValue = displayedNum
-            secondValue = calculadora.dataset.modValue
+buttons.forEach((button)=>{
+    button.addEventListener("click", ()=>{
+        const buttonText = button.innerText;
+        if(/^[0-9,]=$/.teste(buttonText)){
+            addDigit(buttonText);
+        }else if(["*","-","x","+"].includes(buttonText)){
+            setOperator(buttonText);
+        }else if(buttonText === "="){
+            calculate();
+        }else if(buttonText === "C"){
+            clearCalculator();
+        }else if(buttonText === "±"){
+            currentNumber = (
+                parseFloat(currentNumber || firstOperand) * -1
+            ).toString();
+            updateResult();
         }
-        display.textContent = calculadora(firstValue,operator,secondValue)
-    }
-    calculadora.dataset.modValue - secondValue
-    calculadora.dataset.previouskeyType = 'calculate'
-}
-
-const display = document.querySelector('.display')
-
-teclas.addEventListener('click', e =>{
-    if(e.target.matches('button')){
-        const Key = e.target
-        const action = Key.dataset.action
-        const KeyContent = Key.textContent
-        const displayedNum = display.textContent
-    }
-})
-
-if(!action){
-    if(displayedNum === '0'){
-        display.textContent = KeyContent
-    }else{
-        display.textContent = displayedNum + KeyContent
-    }
-}
- if (action === 'decimal'){
-    if(!displayedNum.includes('.')){
-        display.textContent = displayedNum + '.'
-    }else if (
-        previouskeyType === 'operator' ||
-        previouskeyType === 'calculate'
-    ){
-        display.textContent = '0.'
-    }
-  calculadora.dataset.previouskeyType = 'decimal'
- }
-
- const previouskeyType = calculadora.dataset.previouskeyType
-
- if(!action){
-
-    if(displayedNum === '0' ||
-     previouskeyType === 'operator' ||
-     previouskeyType === 'calculate')
-     {
-     display.textContent = KeyContent
-
-    }else{
-        display.textContent = displayedNum + KeyContent
-    }
-    calculadora.dataset.previouskeyType = 'number'
- }
- 
- const Calculadora = (n1,operator,n2) =>{
-    let result = ''
-
-    if(operator === 'add'){
-        result = parseFloat(n1) + parseFloat(n2)
-    }else if(operator === 'subtract'){
-        result = parseFloat(n1) - parseFloat(n2)
-    }else if (operator === 'multiply'){
-        result = parseFloat(n1) * parseFloat(n2)
-    }else if(operator === 'divide'){
-        result = parseFloat(n1)/ parseFloat(n2)
-    }
-
-    return result
- }
-
-
-
+    });
+});
