@@ -1,104 +1,130 @@
-const display = document.querySelector(".display");
-const buttons = document.querySelectorAll(".buttons button");
+const previousOperationText = document.querySelector("#previous-operation");
+const currentOperationText = document.querySelector("#current-operation");
+const buttons = document.querySelectorAll("#buttons-container button");
 
-let currentNumber = "";
-let firstOperand = null;
-let operator = null;
-let restart = false;
-
-function updateResult (originClear = false){
-    XPathResult.innerText = originClear ? 0 : currentNumber.replace(".",",");
-} 
-
-function addDigit(digit){
-    if(digit === "," && (currentNumber.includes(",") || !currentNumber))
-    return;
-}
-if(restart){
-    currentNumber = digit;
-    restart = false;
-}else{
-    currentNumber += digit;
-}
-
-updateResult();
-
-function setOperator (newOperator){
-    if(currentNumber){
-        calculate();
-
-        firstOperand = parseFloat(currentNumber.replace(",","."));
-        currentNumber = "";
+class Calculator{
+    constructor(previousOperationText, currentOperationText){
+        this.previousOperationText = previousOperationText;
+        this.currentOperationText = currentOperationText;
+        this.currentOperation = "";
     }
-    operator = newOperator; 
-}
 
+    addDigit(digit){
 
-function calculate(){
-    if(operator === null || firstOperand === null) return;
-    let secondOperand = parseFloat(currentNumber.replace(",","."));
-    let resultValue;
-
-    switch (operator){
-        case "+":
-            resultValue = firstOperand + secondOperand;
-            break;
-        case "-":
-            resultValue = firstOperand + secondOperand;
-            break
-        case "x":
-            resultValue = firstOperand * secondOperand;
-            break;
-        case "÷":
-            resultValue = firstOperand / secondOperand;
-            break;
-        default:
-            return;                
+        if(digit === "." && this.currentOperationText.innerText.includes(".")){
+            return;
+        } 
+        this.currentOperation = digit;
+        this.updateScreen();
     }
-    if(resultValue.toString().split(".")[1]?.length > 5){
-        currentNumber = parseFloat(resultValue.toFixed(5).toString());
-    }else{
-        currentNumber=resultValue.toString();
-    }
-    operator = null;
-    firstOperand = null;
-    percentageValue = null;
-    updateResult();
-}
-function clearCalculator(){
-    currentNumber = "";
-    firstOperand = null;
-    operator = null;
-    updateResult(true);
-}
-function setPercentage(){
-    let result = parseFloat(currentNumber) / 100;
-    if(["*","-"].includes(operator)){
-        result = result * (firstOperand || 1);
-    }
-    if(result.toString(),split(".")[1]?.length > 5){
-        result = result.toFixed(5).toString();
-    }
-    currentNumber = result.toString();
-    updateResult();
-}
-
-buttons.forEach((button)=>{
-    button.addEventListener("click", ()=>{
-        const buttonText = button.innerText;
-        if(/^[0-9,]=$/.teste(buttonText)){
-            addDigit(buttonText);
-        }else if(["*","-","x","+"].includes(buttonText)){
-            setOperator(buttonText);
-        }else if(buttonText === "="){
-            calculate();
-        }else if(buttonText === "C"){
-            clearCalculator();
-        }else if(buttonText === "±"){
-            currentNumber = (
-                parseFloat(currentNumber || firstOperand) * -1
-            ).toString();
-            updateResult();
+    //process all calculator operations
+    processOperation(operation){
+        //check if current value is empty
+        if(this.currentOperationText.innerText === "" && operation !== "C"){
+            //change operation
+            if(this.previousOperationText.innerText !== ""){
+                this.changeOperation()
+            }
+            return;
         }
+
+
+        //get current and previuos value
+        let operationValue
+        const previous = +this.previousOperationText.innerText.split(" ")[0];
+        const current = +this.currentOperationText.innerText;
+
+
+        switch(operation){
+            case "+":
+                operationValue = previous + current
+                this.updateScreen(operationValue, operation, current,previous);
+                break;
+            case "-":
+                operationValue = previous - current
+                this.updateScreen(operationValue, operation, current,previous);
+                break;
+            case "/":
+                operationValue = previous / current
+                this.updateScreen(operationValue, operation, current,previous);
+                break;
+            case "*":
+                operationValue = previous * current
+                this.updateScreen(operationValue, operation, current,previous);
+                break; 
+            case "DEL":
+                this.processDelOperator();
+                break;
+            case "CE":
+                this.processClearCurrentOperator();
+                break;   
+            case "C":
+                this.processClearAllOperator();
+                break;    
+            case "=":
+                this.processEqualOperator();
+                break;         
+            default:
+                return;    
+        }
+    }
+    //changes values of the calculator screen
+    updateScreen(
+         operationValue = null,
+         operation = null, 
+         current = null,
+         previous=null)
+         {
+
+         if(operationValue === null){
+            this.currentOperationText.innerText += this.currentOperation;
+         }else{
+            if(previous === 0){
+                operationValue = current
+            }
+            this.previousOperationText.innerText = `${operationValue} ${operation}`
+            this.currentOperationText.innerText = "";
+         } 
+    }
+
+    // change math operation
+    changeOperation(operation){
+        const mathOperation = ["*", "/","+","-"];
+
+        if(!mathOperation.includes(operation)){
+            return;
+        }
+        this.previousOperationText.innerText =
+         this.previousOperationText.innerText.slice(0, -1) + operation; 
+    }
+
+    processDelOperator(){
+        this.currentOperationText.innerText = 
+        this.currentOperationText.innerText.slice(0, -1);
+    }
+    processClearCurrentOperator(){
+        this.currentOperationText.innerText = "";
+    }
+    processClearAllOperator(){
+        this.currentOperationText.innerText = "";
+        this.previousOperationText.innerText = "";
+    }
+    processEqualOperator(){
+        const operation = previousOperationText.innerText.split(" ")[1];
+        this.processOperation(operation);
+    }
+}
+const calc = new Calculator(previousOperationText,currentOperationText);
+
+buttons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        const value = e.target.innerText;
+
+        if(+value >= 0 || value === "."){
+            calc.addDigit(value);
+        }else{
+            calc.processOperation(value);
+        }
+
     });
 });
